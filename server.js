@@ -56,4 +56,4 @@ app.use("/api/v1/checkouts", checkoutRoutes);
 
 app.use("/api/v1/styles", stylesRoutes);
 
-app.use("/api/v1/qr-single", qrSinglesRoutes);
+app.use("/api/v1/qr-singles", qrSinglesRoutes);

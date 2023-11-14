@@ -17,10 +17,13 @@ const updateQrSingleQuery = `
 
 const deleteQrSingleQuery = "DELETE FROM qr_singles WHERE id = $1;";
 
+const getQrsByStyle = "SELECT * FROM qr_singles WHERE style_id = $1";
+
 module.exports = {
   createQrSingleQuery,
   getQrSinglesQuery,
   getQrSingleByIdQuery,
   updateQrSingleQuery,
   deleteQrSingleQuery,
+  getQrsByStyle,
 };

@@ -61,3 +61,6 @@ logs/
 # Ignore user-specific settings files
 .idea/
 .vscode/
+
+server-cert.pem
+server-key.pem

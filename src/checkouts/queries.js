@@ -19,6 +19,11 @@ const deleteCheckoutById = "DELETE FROM checkouts WHERE id = $1 RETURNING *";
 const getCurrentCheckouts =
   "SELECT count(*) FROM CHECKOUTS WHERE checkout_date IS NOT NULL AND checkin_date IS NULL";
 
+const getCheckoutsByBulkQrs = (qrCodes) => {
+  const values = qrCodes.map((value) => `'${value}'`).join(",");
+  return `SELECT * FROM checkouts WHERE qr_single_id IN (${values})`;
+};
+
 module.exports = {
   createCheckout,
   getAllCheckouts,
@@ -28,4 +33,5 @@ module.exports = {
   deleteCheckoutById,
   getAllCheckoutsWithStyles,
   getCurrentCheckouts,
+  getCheckoutsByBulkQrs,
 };

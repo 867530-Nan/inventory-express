@@ -5,6 +5,9 @@ const qrSinglesController = require("./controller");
 // Create a new QR single
 router.post("/", qrSinglesController.createQrSingle);
 
+// get all by style
+router.get("/by-style/:id", qrSinglesController.getAllQrsByStyle);
+
 // Get all QR singles
 router.get("/", qrSinglesController.getAllQrSingles);
 

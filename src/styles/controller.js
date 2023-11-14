@@ -1,6 +1,8 @@
 const pool = require("../../db"); // Your PostgreSQL database connection
+const { generateBulkQRCodesStyles } = require("../qrSingles/controller");
 const queries = require("./queries");
-const { v4: uuidv4 } = require("uuid");
+const qrSinglesQueries = require("../qrSingles/queries");
+const checkoutQueries = require("../checkouts/queries");
 
 // Create a new style
 const createStyle = async (req, res) => {
@@ -27,23 +29,22 @@ const createStyle = async (req, res) => {
   }
 };
 
-const generateBulkQRCodesStyles = async (styleID, inventory, res) => {
-  const qrCodes = [];
-
-  for (let i = 0; i < inventory; i++) {
-    const qrCode = uuidv4(); // Generate a unique UUID for the QR code
-    qrCodes.push(qrCode);
-  }
-  const sqlQuery = `INSERT INTO qr_singles (style_id, id) VALUES
-    ${qrCodes.map((qrc) => `(${styleID}, '${qrc}')`).join(",\n")}
-    RETURNING *;`;
-
+const getInfoRelativeToStyle = async (req, res) => {
+  const styleId = req.params.id;
   try {
-    const newQrs = await pool.query(sqlQuery);
-    res.status(200).json(newQrs.rows);
+    const qrSingles = await pool.query(qrSinglesQueries.getQrsByStyle, [
+      styleId,
+    ]);
+    const justQRs = qrSingles.rows.map((s) => s.id);
+    const qrCheckouts = await pool.query(
+      checkoutQueries.getCheckoutsByBulkQrs(justQRs),
+    );
+    res
+      .status(200)
+      .json({ qrSingles: qrSingles.rows, checkouts: qrCheckouts.rows });
   } catch (error) {
-    console.error("Error creating bulk QR Codes:", error);
-    res.status(500).json({ error: "Unable to creating bulk QR Codes" });
+    console.error("Error getting low inventory styles:", error);
+    res.status(500).json({ error: "Unable to get low inventory styles" });
   }
 };
 
@@ -127,6 +128,22 @@ const deleteStyle = async (req, res) => {
   }
 };
 
+const getDashboardInfo = async (req, res) => {
+  const styleId = req.params.id;
+
+  try {
+    const style = await pool.query(queries.getDashboardInfoQuery);
+    if (style.rows.length === 0) {
+      res.status(404).json({ error: "no style dashboard found" });
+    } else {
+      res.status(200).json(style.rows);
+    }
+  } catch (error) {
+    console.error("dashboard error", error);
+    res.status(500).json({ error: "Error fetching the style" });
+  }
+};
+
 module.exports = {
   createStyle,
   getAllStyles,
@@ -134,4 +151,6 @@ module.exports = {
   updateStyle,
   deleteStyle,
   getLowInventoryStyles,
+  getInfoRelativeToStyle,
+  getDashboardInfo,
 };
