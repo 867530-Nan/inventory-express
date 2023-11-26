@@ -3,11 +3,11 @@ const app = express();
 const https = require("https");
 const fs = require("fs");
 const path = require("path"); //
-const stylesRoutes = require("./src/styles/routes");
-const customerRoutes = require("./src/customers/routes");
-const locationRoutes = require("./src/locations/routes");
-const checkoutRoutes = require("./src/checkouts/routes");
-const qrSinglesRoutes = require("./src/qrSingles/routes");
+const stylesRoutes = require("./src/api/styles/routes");
+const customerRoutes = require("./src/api/customers/routes");
+const locationRoutes = require("./src/api/locations/routes");
+const checkoutRoutes = require("./src/api/checkouts/routes");
+const qrSinglesRoutes = require("./src/api/qrSingles/routes");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 var cors = require("cors");
 

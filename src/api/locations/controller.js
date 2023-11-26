@@ -1,4 +1,4 @@
-const pool = require("../../db"); // Your PostgreSQL connection pool
+const pool = require("../../../db"); // Your PostgreSQL connection pool
 const queries = require("./queries");
 // Create a Location (POST Request)
 const createLocation = async (req, res) => {

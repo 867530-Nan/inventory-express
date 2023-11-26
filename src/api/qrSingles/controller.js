@@ -1,4 +1,4 @@
-const pool = require("../../db"); // Your database connection
+const pool = require("../../../db"); // Your database connection
 const qrSinglesQueries = require("./queries");
 const styleQueries = require("../styles/queries");
 const checkoutQueries = require("../checkouts/queries");
@@ -88,6 +88,27 @@ const getQrSingleById = async (req, res) => {
   }
 };
 
+const getQRStyleAndCheckout = async (req, res) => {
+  const qrId = req.params.id;
+
+  try {
+    const associatedStyle = await pool.query(qrSinglesQueries.getStyleById, [
+      qrId,
+    ]);
+    const associatedCheckouts = await pool.query(
+      checkoutQueries.getCheckoutByQR,
+      [qrId],
+    );
+    res.status(200).json({
+      style: associatedStyle.rows,
+      checkouts: associatedCheckouts.rows,
+    });
+  } catch (error) {
+    console.log("the error 55", error);
+    res.status(500).json({ error: "Error fetching the QR style checkouts" });
+  }
+};
+
 // Update a QR single by ID
 const updateQrSingle = async (req, res) => {
   const qrSingleId = req.params.id;
@@ -135,4 +156,5 @@ module.exports = {
   deleteQrSingle,
   getAllQrsByStyle,
   generateBulkQRCodesStyles,
+  getQRStyleAndCheckout,
 };

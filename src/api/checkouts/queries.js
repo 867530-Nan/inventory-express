@@ -1,5 +1,5 @@
 const createCheckout =
-  "INSERT INTO checkouts (customer_email, qr_single_id, checkout_date, checkin_date) VALUES ($1, $2, $3, $4) RETURNING *";
+  "INSERT INTO checkouts (customer_email, qr_single_id, checkout_date) VALUES ($1, $2, $3) RETURNING *";
 
 const getAllCheckouts = "SELECT * FROM checkouts";
 

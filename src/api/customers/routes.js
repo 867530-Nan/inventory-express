@@ -4,6 +4,7 @@ const router = express.Router();
 const customersController = require("./controller");
 
 // Get all Customers (GET Request)
+router.post("/like-search", customersController.getCustomersLikeSearch);
 router.get("/", customersController.getAllCustomers);
 // Create a Customer (POST Request)
 router.post("/", customersController.createCustomer);

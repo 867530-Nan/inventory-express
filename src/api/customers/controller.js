@@ -1,4 +1,4 @@
-const pool = require("../../db"); // Your PostgreSQL connection pool
+const pool = require("../../../db"); // Your PostgreSQL connection pool
 const queries = require("./queries");
 
 // Create a Customer (POST Request)
@@ -94,10 +94,30 @@ const deleteCustomerById = async (req, res) => {
   }
 };
 
+const getCustomersLikeSearch = async (req, res) => {
+  console.log("lets like search!");
+  try {
+    console.log(" thes arch sting: ", req.body);
+
+    const findLikeString = await pool.query(
+      "SELECT * FROM customers WHERE name ILIKE $1",
+      [`%${req.body.searchString}%`],
+    );
+
+    console.log("findLikeString: ", findLikeString);
+
+    res.status(200).json(findLikeString.rows);
+  } catch (error) {
+    console.error("Error finding like:", error);
+    res.status(500).json({ error: "unable to find like" });
+  }
+};
+
 module.exports = {
   createCustomer,
   getAllCustomers,
   getCustomerById,
   updateCustomerById,
   deleteCustomerById,
+  getCustomersLikeSearch,
 };

@@ -9,10 +9,14 @@ const updateCustomerById =
   "UPDATE customers SET name = $1, email = $2, address = $3, phone_number = $4 WHERE id = $5 RETURNING *";
 
 const deleteCustomer = "DELETE FROM customers WHERE id = $1 RETURNING *";
+
+const findCustomersLikeString = "SELECT * FROM customers WHERE name ILIKE $1";
+
 module.exports = {
   newCustomer,
   getAllCustomers,
   getCustomerById,
   updateCustomerById,
   deleteCustomer,
+  findCustomersLikeString,
 };

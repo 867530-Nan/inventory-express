@@ -1,4 +1,4 @@
-const pool = require("../../db"); // Your PostgreSQL database connection
+const pool = require("../../../db");
 const { generateBulkQRCodesStyles } = require("../qrSingles/controller");
 const queries = require("./queries");
 const qrSinglesQueries = require("../qrSingles/queries");
@@ -55,6 +55,16 @@ const getLowInventoryStyles = async (req, res) => {
   } catch (error) {
     console.error("Error getting low inventory styles:", error);
     res.status(500).json({ error: "Unable to get low inventory styles" });
+  }
+};
+
+const singleDecreaseInventory = async (req, res) => {
+  const styleId = req.params.id;
+  try {
+    await pool.query(queries.decInv, [styleId]);
+  } catch (error) {
+    console.error("Error lower inventory styles:", error);
+    res.status(500).json({ error: "Unable to lower inventory styles" });
   }
 };
 
@@ -129,12 +139,10 @@ const deleteStyle = async (req, res) => {
 };
 
 const getDashboardInfo = async (req, res) => {
-  const styleId = req.params.id;
-
   try {
     const style = await pool.query(queries.getDashboardInfoQuery);
     if (style.rows.length === 0) {
-      res.status(404).json({ error: "no style dashboard found" });
+      res.status(204).json({ error: "no style dashboard found" });
     } else {
       res.status(200).json(style.rows);
     }
@@ -153,4 +161,5 @@ module.exports = {
   getLowInventoryStyles,
   getInfoRelativeToStyle,
   getDashboardInfo,
+  singleDecreaseInventory,
 };

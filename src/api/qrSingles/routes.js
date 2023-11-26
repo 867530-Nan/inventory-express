@@ -14,6 +14,11 @@ router.get("/", qrSinglesController.getAllQrSingles);
 // Get a QR single by ID
 router.get("/:id", qrSinglesController.getQrSingleById);
 
+router.get(
+  "/:id/style-and-checkouts",
+  qrSinglesController.getQRStyleAndCheckout,
+);
+
 // Update a QR single by ID
 router.put("/:id", qrSinglesController.updateQrSingle);
 

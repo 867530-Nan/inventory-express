@@ -10,6 +10,11 @@ router.get("/", styleController.getAllStyles);
 
 router.get("/low-inventory", styleController.getLowInventoryStyles);
 
+router.put(
+  "/single-decrease-inventory/:id",
+  styleController.singleDecreaseInventory,
+);
+
 router.get("/get-style-info/:id", styleController.getInfoRelativeToStyle);
 
 router.get("/dashboard-info", styleController.getDashboardInfo);

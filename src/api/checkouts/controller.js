@@ -1,17 +1,20 @@
-const pool = require("../../db"); // Your PostgreSQL connection pool
+const pool = require("../../../db"); // Your PostgreSQL connection pool
 const queries = require("./queries");
+const styleQueries = require("../styles/queries");
 // Create a Checkout (POST Request)
 const createCheckout = async (req, res) => {
   try {
-    const { customer_email, qr_single_id, checkout_date, checkin_date } =
-      req.body;
+    const { customer_email, qr_single_id, checkout_date, style_id } = req.body;
 
     const newCheckout = await pool.query(queries.createCheckout, [
       customer_email,
       qr_single_id,
       checkout_date,
-      checkin_date,
     ]);
+
+    pool.query(styleQueries.singleDecreaseInventory, [style_id]);
+
+    await pool.query();
 
     res.status(201).json(newCheckout.rows[0]);
   } catch (error) {

@@ -22,6 +22,8 @@ AND checkouts.checkin_date IS NULL
 GROUP BY
 styles.id;`;
 
+const decInv = `Update styles set inventory = inventory - 1`;
+
 module.exports = {
   getLowInventoryStyles,
   createStyle,
@@ -30,4 +32,5 @@ module.exports = {
   updateStyle,
   deleteStyle,
   getDashboardInfoQuery,
+  decInv,
 };
