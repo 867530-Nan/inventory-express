@@ -48,6 +48,37 @@ const getInfoRelativeToStyle = async (req, res) => {
   }
 };
 
+const getInfoByStyleName = async (req, res) => {
+  const { name } = req.body;
+  try {
+    const response = await pool.query(queries.getStyleInfoByName, [name]);
+    function groupStyles(styles) {
+      const groupedByName = styles.reduce((accByName, style) => {
+        const { name, color } = style;
+
+        if (!accByName[name]) {
+          accByName[name] = {};
+        }
+
+        if (!accByName[name][color]) {
+          accByName[name][color] = [];
+        }
+
+        accByName[name][color].push(style);
+
+        return accByName;
+      }, {});
+
+      return groupedByName;
+    }
+    const getGrouped = groupStyles(response.rows);
+    res.status(200).json(getGrouped);
+  } catch (error) {
+    console.error("Error getting low inventory styles:", error);
+    res.status(500).json({ error: "Unable to get low inventory styles" });
+  }
+};
+
 const getLowInventoryStyles = async (req, res) => {
   try {
     const checkouts = await pool.query(queries.getLowInventoryStyles);
@@ -162,4 +193,5 @@ module.exports = {
   getInfoRelativeToStyle,
   getDashboardInfo,
   singleDecreaseInventory,
+  getInfoByStyleName,
 };

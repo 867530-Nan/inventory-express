@@ -17,6 +17,8 @@ router.put(
 
 router.get("/get-style-info/:id", styleController.getInfoRelativeToStyle);
 
+router.post("/get-style-info-by-name", styleController.getInfoByStyleName);
+
 router.get("/dashboard-info", styleController.getDashboardInfo);
 
 // Get a style by ID
