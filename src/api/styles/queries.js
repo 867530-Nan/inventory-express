@@ -5,26 +5,26 @@ const getStyleById = "SELECT * FROM styles WHERE id = $1";
 const updateStyle =
   "UPDATE styles SET name = $1, color = $2, texture = $3, price = $4, inventory = $5, image_url = $6 WHERE id = $7 RETURNING *";
 const deleteStyle = "DELETE FROM styles WHERE id = $1 RETURNING *";
-const getLowInventoryStyles = "SELECT * FROM CHECKOUTS WHERE inventory < 5";
+const getLowInventoryStyles = "SELECT * FROM STYLES WHERE inventory < 5";
 
 const getDashboardInfoQuery = `SELECT
 styles.*,
-COUNT(checkouts.id) AS checkout_count
+COUNT(orders.id) AS order_count
 FROM
 styles
 LEFT JOIN
 qr_singles ON styles.id = qr_singles.style_id
 LEFT JOIN
-checkouts ON qr_singles.id = checkouts.qr_single_id
+orders ON qr_singles.id = orders.qr_single_id
 WHERE
-checkouts.checkout_date IS NOT NULL
-AND checkouts.checkin_date IS NULL
+orders.order_date IS NOT NULL
+AND orders.checkin_date IS NULL
 GROUP BY
 styles.id;`;
 
 const decInv = `Update styles set inventory = inventory - 1`;
 
-const getStyleInfoByName = `SELECT styles.*, qr_singles.location_id, qr_singles.customer_id, qr_singles.checkout_id, qr_singles.qr_code
+const getStyleInfoByName = `SELECT styles.*, qr_singles.order_id, qr_singles.qr_code
 FROM styles
 JOIN qr_singles ON styles.id = qr_singles.style_id
 WHERE styles.name = $1;`;

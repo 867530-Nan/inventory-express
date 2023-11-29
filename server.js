@@ -6,7 +6,7 @@ const path = require("path"); //
 const stylesRoutes = require("./src/api/styles/routes");
 const customerRoutes = require("./src/api/customers/routes");
 const locationRoutes = require("./src/api/locations/routes");
-const checkoutRoutes = require("./src/api/checkouts/routes");
+const orderRoutes = require("./src/api/orders/routes");
 const qrSinglesRoutes = require("./src/api/qrSingles/routes");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 var cors = require("cors");
@@ -52,7 +52,7 @@ app.use("/api/v1/customers", customerRoutes);
 
 app.use("/api/v1/locations", locationRoutes);
 
-app.use("/api/v1/checkouts", checkoutRoutes);
+app.use("/api/v1/orders", orderRoutes);
 
 app.use("/api/v1/styles", stylesRoutes);
 

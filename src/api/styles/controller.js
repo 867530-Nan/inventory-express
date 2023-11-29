@@ -2,7 +2,7 @@ const pool = require("../../../db");
 const { generateBulkQRCodesStyles } = require("../qrSingles/controller");
 const queries = require("./queries");
 const qrSinglesQueries = require("../qrSingles/queries");
-const checkoutQueries = require("../checkouts/queries");
+const orderQueries = require("../orders/queries");
 
 // Create a new style
 const createStyle = async (req, res) => {
@@ -36,12 +36,8 @@ const getInfoRelativeToStyle = async (req, res) => {
       styleId,
     ]);
     const justQRs = qrSingles.rows.map((s) => s.id);
-    const qrCheckouts = await pool.query(
-      checkoutQueries.getCheckoutsByBulkQrs(justQRs),
-    );
-    res
-      .status(200)
-      .json({ qrSingles: qrSingles.rows, checkouts: qrCheckouts.rows });
+    const qrOrders = await pool.query(orderQueries.getOrdersByBulkQrs(justQRs));
+    res.status(200).json({ qrSingles: qrSingles.rows, orders: qrOrders.rows });
   } catch (error) {
     console.error("Error getting low inventory styles:", error);
     res.status(500).json({ error: "Unable to get low inventory styles" });
@@ -81,8 +77,8 @@ const getInfoByStyleName = async (req, res) => {
 
 const getLowInventoryStyles = async (req, res) => {
   try {
-    const checkouts = await pool.query(queries.getLowInventoryStyles);
-    res.status(200).json(checkouts.rows);
+    const orders = await pool.query(queries.getLowInventoryStyles);
+    res.status(200).json(orders.rows);
   } catch (error) {
     console.error("Error getting low inventory styles:", error);
     res.status(500).json({ error: "Unable to get low inventory styles" });
