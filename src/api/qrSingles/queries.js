@@ -10,6 +10,8 @@ const getQrSingleByIdQuery = "SELECT * FROM qr_singles WHERE id = $1;";
 
 const getStyleById = `SELECT * from qr_singles qr Left Join styles st on qr.style_id = st.id where qr.id = $1`;
 
+const getStyleByQRCode = `SELECT * from qr_singles qr Left Join styles st on qr.style_id = st.id where qr.qr_code = $1`;
+
 const updateQrSingleQuery = `
   UPDATE qr_singles
   SET style_id = $2
@@ -29,4 +31,5 @@ module.exports = {
   deleteQrSingleQuery,
   getQrsByStyle,
   getStyleById,
+  getStyleByQRCode,
 };

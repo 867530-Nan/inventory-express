@@ -8,6 +8,8 @@ router.post("/", qrSinglesController.createQrSingle);
 // get all by style
 router.get("/by-style/:id", qrSinglesController.getAllQrsByStyle);
 
+router.get("/:id/style-by-qr", qrSinglesController.getStyleByQR);
+
 // Get all QR singles
 router.get("/", qrSinglesController.getAllQrSingles);
 

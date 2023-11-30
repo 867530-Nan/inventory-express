@@ -88,6 +88,20 @@ const getQrSingleById = async (req, res) => {
   }
 };
 
+const getStyleByQR = async (req, res) => {
+  const qrID = req.params.id;
+  console.log("this is the id: ", qrID);
+  try {
+    const response = await pool.query(qrSinglesQueries.getStyleByQRCode, [
+      qrID,
+    ]);
+    res.status(200).json(response.rows[0]);
+  } catch (error) {
+    console.log("getStyleByQR erro: ", error);
+    res.status(500).json({ error: "Error fetching the QR style orders" });
+  }
+};
+
 const getQRStyleAndOrder = async (req, res) => {
   const qrId = req.params.id;
 
@@ -156,4 +170,5 @@ module.exports = {
   getAllQrsByStyle,
   generateBulkQRCodesStyles,
   getQRStyleAndOrder,
+  getStyleByQR,
 };
