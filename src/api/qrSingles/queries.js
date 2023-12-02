@@ -11,6 +11,14 @@ const getQrSingleByIdQuery = "SELECT * FROM qr_singles WHERE id = $1;";
 const getStyleById = `SELECT * from qr_singles qr Left Join styles st on qr.style_id = st.id where qr.id = $1`;
 
 const getStyleByQRCode = `SELECT st.*, qr.* from qr_singles qr Left Join styles st on qr.style_id = st.id where qr.qr_code = $1`;
+
+const getBulkStylesFromQRCodes = `
+SELECT st.*, qr.*
+FROM qr_singles qr
+LEFT JOIN styles st ON qr.style_id = st.id
+WHERE qr.id = ANY($1::int[])
+`;
+
 const getQrSingleByQRCodeQuery = "SELECT * FROM qr_singles WHERE qr_code = $1;";
 const updateQrSingleQuery = `
   UPDATE qr_singles
@@ -32,4 +40,5 @@ module.exports = {
   getQrsByStyle,
   getStyleById,
   getStyleByQRCode,
+  getBulkStylesFromQRCodes,
 };

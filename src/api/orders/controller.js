@@ -2,6 +2,8 @@ const pool = require("../../../db"); // Your PostgreSQL connection pool
 const queries = require("./queries");
 const orderQueries = require("../orders/queries");
 const customerQueries = require("../customers/queries");
+const qrQueries = require("../qrSingles/queries");
+
 // Create a Order (POST Request)
 const createOrder = async (req, res) => {
   try {
@@ -26,10 +28,20 @@ const createOrder = async (req, res) => {
       .join(", ")};`;
 
     await pool.query(queryText);
+    console.log("styleQueries: ", qrQueries.getBulkStylesFromQRCodes);
+    const codesAndStyles = await pool.query(
+      qrQueries.getBulkStylesFromQRCodes,
+      [qr_code_ids],
+    );
 
     res.status(201).json({
       success: true,
       message: "Customer and Order created, and QR codes added to the order.",
+      data: {
+        customer: customer.rows[0],
+        order: order.rows[0],
+        codesAndStyles: codesAndStyles.rows,
+      },
     });
   } catch (error) {
     console.error("Error creating order:", error);
