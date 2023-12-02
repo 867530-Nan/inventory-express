@@ -1,22 +1,36 @@
 const pool = require("../../../db"); // Your PostgreSQL connection pool
 const queries = require("./queries");
-const styleQueries = require("../styles/queries");
+const orderQueries = require("../orders/queries");
+const customerQueries = require("../customers/queries");
 // Create a Order (POST Request)
 const createOrder = async (req, res) => {
   try {
-    const { customer_email, qr_single_id, order_date, style_id } = req.body;
+    const {
+      customer: { name, address, phoneNumber, email },
+      qr_code_ids,
+    } = req.body;
 
-    const newOrder = await pool.query(queries.createOrder, [
-      customer_email,
-      qr_single_id,
-      order_date,
+    const customer = await pool.query(
+      customerQueries.createCustomerIfEmailDoesntExist,
+      [name, address, phoneNumber, email],
+    );
+
+    const order = await pool.query(orderQueries.createOrder, [
+      customer.rows[0].id,
     ]);
 
-    pool.query(styleQueries.singleDecreaseInventory, [style_id]);
+    const queryText = `
+    INSERT INTO order_qr_code_relations (order_id, qr_single_id)
+    VALUES ${qr_code_ids
+      .map((code, index) => `(${order.rows[0].id}, ${code})`)
+      .join(", ")};`;
 
-    await pool.query();
+    await pool.query(queryText);
 
-    res.status(201).json(newOrder.rows[0]);
+    res.status(201).json({
+      success: true,
+      message: "Customer and Order created, and QR codes added to the order.",
+    });
   } catch (error) {
     console.error("Error creating order:", error);
     res.status(500).json({ error: "Unable to create order" });

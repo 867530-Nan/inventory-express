@@ -1,6 +1,9 @@
 const newCustomer =
   "INSERT INTO customers (name, email, address, phone_number) VALUES ($1, $2, $3, $4) RETURNING *";
 
+const createCustomerIfEmailDoesntExist =
+  "INSERT INTO customers (name, address, phone_number, email) VALUES ($1, $2, $3, $4) ON CONFLICT (email) DO UPDATE SET name = customers.name RETURNING *";
+
 const getAllCustomers = "SELECT * FROM customers";
 
 const getCustomerById = "SELECT * FROM customers WHERE id = $1";
@@ -19,4 +22,5 @@ module.exports = {
   updateCustomerById,
   deleteCustomer,
   findCustomersLikeString,
+  createCustomerIfEmailDoesntExist,
 };

@@ -1,5 +1,5 @@
 const createOrder =
-  "INSERT INTO orders (customer_id, qr_codes, order_date, location_id) VALUES ($1, $2::jsonb, $3, $4) RETURNING *;";
+  "INSERT INTO orders (customer_id, checkout_date) VALUES ($1, CURRENT_TIMESTAMP) RETURNING *;";
 
 const getAllOrders = "SELECT * FROM orders";
 
