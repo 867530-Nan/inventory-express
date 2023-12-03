@@ -35,13 +35,9 @@ const createOrder = async (req, res) => {
     );
 
     res.status(201).json({
-      success: true,
-      message: "Customer and Order created, and QR codes added to the order.",
-      data: {
-        customer: customer.rows[0],
-        order: order.rows[0],
-        codesAndStyles: codesAndStyles.rows,
-      },
+      customer: customer.rows[0],
+      order: order.rows[0],
+      codesAndStyles: codesAndStyles.rows,
     });
   } catch (error) {
     console.error("Error creating order:", error);
