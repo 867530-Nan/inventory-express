@@ -48,7 +48,7 @@ const createOrder = async (req, res) => {
 // Get all Orders (GET Request)
 const getAllOrders = async (req, res) => {
   try {
-    const orders = await pool.query(queries.getAllOrders);
+    const orders = await pool.query(queries.getAllOrderInformation);
     res.status(200).json(orders.rows);
   } catch (error) {
     console.error("Error getting orders:", error);

@@ -24,10 +24,14 @@ styles.id;`;
 
 const decInv = `Update styles set inventory = inventory - 1`;
 
-const getStyleInfoByName = `SELECT styles.*, qr_singles.order_id, qr_singles.qr_code
-FROM styles
-JOIN qr_singles ON styles.id = qr_singles.style_id
-WHERE styles.name = $1;`;
+const getStyleInfoByName = `
+  SELECT 
+    styles.*,
+    qr_singles.qr_code
+  FROM styles
+  JOIN qr_singles ON styles.id = qr_singles.style_id
+  WHERE styles.name = $1;
+`;
 
 module.exports = {
   getLowInventoryStyles,

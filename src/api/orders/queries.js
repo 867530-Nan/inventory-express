@@ -5,6 +5,32 @@ const getAllOrders = "SELECT * FROM orders";
 
 const getOrderById = "SELECT * FROM orders WHERE id = $1";
 
+const getAllOrderInformation = `SELECT
+o.id AS order_id,
+o.checkout_date,
+o.checkin_date,
+c.id AS customer_id,
+c.name AS customer_name,
+c.email AS customer_email,
+c.address AS customer_address,
+c.phone_number AS customer_phone_number,
+qr.id AS qr_code_id,
+qr.qr_code,
+s.id AS style_id,
+s.name AS style_name,
+s.color AS style_color
+FROM
+orders o
+JOIN
+customers c ON o.customer_id = c.id
+LEFT JOIN
+order_qr_code_relations oq ON o.id = oq.order_id
+LEFT JOIN
+qr_singles qr ON oq.qr_single_id = qr.id
+LEFT JOIN
+styles s ON qr.style_id = s.id;
+`;
+
 const getOrderByQR =
   "SELECT * FROM orders WHERE qr_codes @> '[ $1 ]' AND checkin_date IS NULL";
 
@@ -34,4 +60,5 @@ module.exports = {
   getAllOrdersWithStyles,
   getCurrentOrders,
   getOrdersByBulkQrs,
+  getAllOrderInformation,
 };
