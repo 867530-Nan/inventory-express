@@ -10,6 +10,8 @@ router.get("/by-style/:id", qrSinglesController.getAllQrsByStyle);
 
 router.get("/:id/style-by-qr", qrSinglesController.getStyleByQR);
 
+router.get("/:id/check-has-inventory", qrSinglesController.checkHasInventory);
+
 // Get all QR singles
 router.get("/", qrSinglesController.getAllQrSingles);
 

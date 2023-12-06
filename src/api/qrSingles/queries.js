@@ -19,7 +19,12 @@ LEFT JOIN styles st ON qr.style_id = st.id
 WHERE qr.id = ANY($1::int[])
 `;
 
-const getQrSingleByQRCodeQuery = "SELECT * FROM qr_singles WHERE qr_code = $1;";
+const checkIfQRStyleHasInventory = `SELECT qr.*
+FROM qr_singles qr
+JOIN styles st ON qr.style_id = st.id
+WHERE qr.qr_code = $1 
+AND st.inventory > 0;`;
+
 const updateQrSingleQuery = `
   UPDATE qr_singles
   SET style_id = $2
@@ -41,4 +46,5 @@ module.exports = {
   getStyleById,
   getStyleByQRCode,
   getBulkStylesFromQRCodes,
+  checkIfQRStyleHasInventory,
 };

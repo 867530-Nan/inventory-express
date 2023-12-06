@@ -90,12 +90,16 @@ const getQrSingleById = async (req, res) => {
 
 const getStyleByQR = async (req, res) => {
   const qrID = req.params.id;
-  console.log("this is the id: ", qrID);
   try {
     const response = await pool.query(qrSinglesQueries.getStyleByQRCode, [
       qrID,
     ]);
-    res.status(200).json(response.rows[0]);
+    if (response.rows.length > 0) {
+      res.status(200).json(response.rows[0]);
+    } else {
+      // Handle the case where no rows are found
+      res.status(404).json({ error: "No matching rows found" });
+    }
   } catch (error) {
     console.log("getStyleByQR erro: ", error);
     res.status(500).json({ error: "Error fetching the QR style orders" });
@@ -142,6 +146,25 @@ const updateQrSingle = async (req, res) => {
   }
 };
 
+const checkHasInventory = async (req, res) => {
+  const qrSingleId = req.params.id;
+
+  try {
+    const response = await pool.query(
+      qrSinglesQueries.checkIfQRStyleHasInventory,
+      [qrSingleId],
+    );
+    if (response.rows.length > 0) {
+      res.status(200).json({ message: "There is at least 1 in inventory." });
+    } else {
+      // Handle the case where no rows are found
+      res.status(404).json({ error: "No more inventory" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Error checking inventory" });
+  }
+};
+
 // Delete a QR single by ID
 const deleteQrSingle = async (req, res) => {
   const qrSingleId = req.params.id;
@@ -171,4 +194,5 @@ module.exports = {
   generateBulkQRCodesStyles,
   getQRStyleAndOrder,
   getStyleByQR,
+  checkHasInventory,
 };
