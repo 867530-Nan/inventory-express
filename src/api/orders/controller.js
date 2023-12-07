@@ -3,6 +3,7 @@ const queries = require("./queries");
 const orderQueries = require("../orders/queries");
 const customerQueries = require("../customers/queries");
 const qrQueries = require("../qrSingles/queries");
+const styleQueries = require("../styles/queries");
 
 // Create a Order (POST Request)
 const createOrder = async (req, res) => {
@@ -12,11 +13,13 @@ const createOrder = async (req, res) => {
       qr_code_ids,
     } = req.body;
 
+    // create the customer if doesn't already exist
     const customer = await pool.query(
       customerQueries.createCustomerIfEmailDoesntExist,
       [name, address, phoneNumber, email],
     );
 
+    // create an order
     const order = await pool.query(orderQueries.createOrder, [
       customer.rows[0].id,
     ]);
@@ -27,8 +30,13 @@ const createOrder = async (req, res) => {
       .map((code, index) => `(${order.rows[0].id}, ${code})`)
       .join(", ")};`;
 
+    // insert the associations of order and qr_single_id
     await pool.query(queryText);
-    console.log("styleQueries: ", qrQueries.getBulkStylesFromQRCodes);
+    // update the inventory to reflect checking out the sample
+    await pool.query(styleQueries.decreaseStyleInventoryByOneViaQrID, [
+      qr_code_ids,
+    ]);
+    // get the updated style and qr_code information
     const codesAndStyles = await pool.query(
       qrQueries.getBulkStylesFromQRCodes,
       [qr_code_ids],

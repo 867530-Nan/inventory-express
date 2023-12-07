@@ -7,6 +7,14 @@ const updateStyle =
 const deleteStyle = "DELETE FROM styles WHERE id = $1 RETURNING *";
 const getLowInventoryStyles = "SELECT * FROM STYLES WHERE inventory < 5";
 
+const decreaseStyleInventoryByOneViaQrID = `UPDATE styles
+SET inventory = inventory - 1
+WHERE id IN (SELECT style_id FROM qr_singles WHERE id IN ($1:csv));`;
+
+const increaseStyleInventoryByOneViaQrID = `UPDATE styles
+SET inventory = inventory + 1
+WHERE id IN (SELECT style_id FROM qr_singles WHERE id IN ($1:csv));`;
+
 const getDashboardInfoQuery = `SELECT
 styles.*,
 COUNT(orders.id) AS order_count
@@ -43,4 +51,6 @@ module.exports = {
   getDashboardInfoQuery,
   decInv,
   getStyleInfoByName,
+  decreaseStyleInventoryByOneViaQrID,
+  increaseStyleInventoryByOneViaQrID,
 };
