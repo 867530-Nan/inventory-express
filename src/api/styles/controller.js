@@ -6,16 +6,14 @@ const orderQueries = require("../orders/queries");
 
 // Create a new style
 const createStyle = async (req, res) => {
-  const { name, color, texture, price, inventory, image_url } = req.body;
+  const { name, color, price, inventory } = req.body;
 
   try {
     const newStyle = await pool.query(queries.createStyle, [
       name,
       color,
-      texture,
       price,
       inventory,
-      image_url,
     ]);
 
     generateBulkQRCodesStyles(
@@ -126,16 +124,14 @@ const getStyleById = async (req, res) => {
 // Update a style by ID
 const updateStyle = async (req, res) => {
   const styleId = req.params.id;
-  const { name, color, texture, price, inventory, image_url } = req.body;
+  const { name, color, price, inventory } = req.body;
 
   try {
     const updatedStyle = await pool.query(queries.updateStyle, [
       name,
       color,
-      texture,
       price,
       inventory,
-      image_url,
       styleId,
     ]);
 

@@ -103,6 +103,21 @@ const getOrderByQR = async (req, res) => {
 
 // Get Order by ID (GET Request)
 const getOrderById = async (req, res) => {
+  //   {
+  //     "order_id": 112,
+  //     "checkout_date": "2023-12-08 17:52:48.146365-07",
+  //     "checkin_date": null,
+  //     "customer_id": 3,
+  //     "customer_name": "Bobby Gumbo",
+  //     "customer_email": "bobby.gumbo@gmail.com",
+  //     "customer_address": "Gumbo Drive",
+  //     "customer_phone_number": "021 038 6301",
+  //     "qr_code_id": 13620,
+  //     "qr_code": 112942,
+  //     "style_id": 2,
+  //     "style_name": "8th Wonder",
+  //     "style_color": "0705 Oamaru"
+  // }
   try {
     const orderId = req.params.id;
     const order = await pool.query(queries.getOrderById, [orderId]);
@@ -112,7 +127,7 @@ const getOrderById = async (req, res) => {
       return;
     }
 
-    res.status(200).json(order.rows[0]);
+    res.status(200).json({});
   } catch (error) {
     console.error("Error getting order by ID:", error);
     res.status(500).json({ error: "Unable to get order" });
