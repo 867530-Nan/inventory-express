@@ -3,7 +3,10 @@ const createOrder =
 
 const getAllOrders = "SELECT * FROM orders";
 
-const getOrderById = `SELECT
+const getOrderById =
+  "SELECT id, checkout_date, checkin_date from orders where id = $1";
+
+const getOrderCustomerStylesById = `SELECT
 o.id AS order_id,
 o.checkout_date,
 o.checkin_date,
@@ -14,11 +17,11 @@ c.address AS customer_address,
 c.phone_number AS customer_phone_number,
 JSON_AGG(
   JSON_BUILD_OBJECT(
-    'qr_code_id', qr.id,
+    'id', qr.id,
     'qr_code', qr.qr_code,
     'style_id', s.id,
-    'style_name', s.name,
-    'style_color', s.color
+    'name', s.name,
+    'color', s.color
   )
 ) AS qr_code_styles
 FROM
@@ -70,7 +73,7 @@ const getOrdersByBulkQrs = (qrCodes) => {
 module.exports = {
   createOrder,
   getAllOrders,
-  getOrderById,
+  getOrderCustomerStylesById,
   getOrderByQR,
   updateOrderById,
   deleteOrderById,
@@ -78,4 +81,5 @@ module.exports = {
   getCurrentOrders,
   getOrdersByBulkQrs,
   getOrdersDashboardInfo,
+  getOrderById,
 };

@@ -53,6 +53,63 @@ const createOrder = async (req, res) => {
   }
 };
 
+const updateEntireOrder = async (req, res) => {
+  try {
+    const {
+      orderId, // Assuming you have an orderId to identify the order to update
+      customer: { name, address, phoneNumber, email },
+      qr_code_ids,
+    } = req.body;
+
+    // Update the customer information
+    const updatedCustomer = await pool.query(
+      customerQueries.updateCustomerByOrderId,
+      [name, email, address, phoneNumber, orderId],
+    );
+
+    const deleteOriginalQRs = `
+      Delete from order_qr_code_relations where order_id = $1
+    `;
+
+    const updatedOrder = await pool.query(orderQueries.getOrderById, [orderId]);
+
+    // Delete existing associations
+    await pool.query(deleteOriginalQRs, [orderId]);
+
+    // add back to inventory the deleted associations
+    await pool.query(styleQueries.increaseStyleInventoryByOneViaQrID, [
+      qr_code_ids,
+    ]);
+
+    // Insert new associations
+    const queryText = `
+      INSERT INTO order_qr_code_relations (order_id, qr_single_id)
+      VALUES ${qr_code_ids.map((code) => `(${orderId}, ${code})`).join(", ")};`;
+    console.log("the query tet", queryText);
+    await pool.query(queryText);
+
+    // Update the inventory to reflect the updated samples
+    await pool.query(styleQueries.decreaseStyleInventoryByOneViaQrID, [
+      qr_code_ids,
+    ]);
+
+    // Get the updated style and qr_code information
+    const codesAndStyles = await pool.query(
+      qrQueries.getBulkStylesFromQRCodes,
+      [qr_code_ids],
+    );
+
+    res.status(200).json({
+      customer: updatedCustomer.rows[0],
+      order: updatedOrder.rows[0],
+      codesAndStyles: codesAndStyles.rows,
+    });
+  } catch (error) {
+    console.error("Error updating order:", error);
+    res.status(500).json({ error: "Unable to update order" });
+  }
+};
+
 // Get all Orders (GET Request)
 const getOrdersDashboardInfo = async (req, res) => {
   try {
@@ -102,10 +159,12 @@ const getOrderByQR = async (req, res) => {
 };
 
 // Get Order by ID (GET Request)
-const getOrderById = async (req, res) => {
+const getOrderCustomerStylesById = async (req, res) => {
   try {
     const orderId = req.params.id;
-    const order = await pool.query(queries.getOrderById, [orderId]);
+    const order = await pool.query(queries.getOrderCustomerStylesById, [
+      orderId,
+    ]);
 
     if (order.rowCount === 0) {
       res.status(404).json({ error: "Order not found" });
@@ -187,10 +246,11 @@ const deleteOrderById = async (req, res) => {
 module.exports = {
   createOrder,
   getOrdersDashboardInfo,
-  getOrderById,
+  getOrderCustomerStylesById,
   getOrderByQR,
   updateOrderById,
   deleteOrderById,
   getAllOrdersWithStyles,
   getCurrentOrders,
+  updateEntireOrder,
 };

@@ -16,7 +16,7 @@ const latestQRCode =
   "Select qr_code from qr_singles order by qr_code desc limit 1";
 
 const getBulkStylesFromQRCodes = `
-SELECT st.*, qr.*
+SELECT qr.id, qr.qr_code, st.name, st.color, st.id as style_id
 FROM qr_singles qr
 LEFT JOIN styles st ON qr.style_id = st.id
 WHERE qr.id = ANY($1::int[])
