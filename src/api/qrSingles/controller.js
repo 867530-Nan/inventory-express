@@ -2,6 +2,7 @@ const pool = require("../../../db"); // Your database connection
 const qrSinglesQueries = require("./queries");
 const styleQueries = require("../styles/queries");
 const orderQueries = require("../orders/queries");
+const { uuid } = require("uuidv4");
 
 // Create a new QR single
 const createQrSingle = async (req, res) => {
@@ -19,12 +20,24 @@ const createQrSingle = async (req, res) => {
   }
 };
 
+const latestQRCode = async (req, res) => {
+  try {
+    const latest = await pool.query(qrSinglesQueries.latestQRCode);
+    res.status(200).json(latest.rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: "error fetching latest qr code" });
+    console.log("error fetching latest qr code", error);
+  }
+};
+
 const generateBulkQRCodesStyles = async (styleID, inventory, res) => {
   const qrCodes = [];
 
   for (let i = 0; i < inventory; i++) {
-    const qrCode = uuidv4(); // Generate a unique UUID for the QR code
-    qrCodes.push(qrCode);
+    const { qr_code } = await pool.query(qrSinglesQueries.latestQRCode);
+    const eyeplusone = i + 1;
+    const increased_qr = qr_code + eyeplusone;
+    qrCodes.push(increased_qr);
   }
   const sqlQuery = `INSERT INTO qr_singles (style_id, id) VALUES
     ${qrCodes.map((qrc) => `(${styleID}, '${qrc}')`).join(",\n")}
@@ -195,4 +208,5 @@ module.exports = {
   getQRStyleAndOrder,
   getStyleByQR,
   checkHasInventory,
+  latestQRCode,
 };

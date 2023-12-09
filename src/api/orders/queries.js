@@ -12,14 +12,18 @@ c.name AS customer_name,
 c.email AS customer_email,
 c.address AS customer_address,
 c.phone_number AS customer_phone_number,
-qr.id AS qr_code_id,
-qr.qr_code,
-s.id AS style_id,
-s.name AS style_name,
-s.color AS style_color
+JSON_AGG(
+  JSON_BUILD_OBJECT(
+    'qr_code_id', qr.id,
+    'qr_code', qr.qr_code,
+    'style_id', s.id,
+    'style_name', s.name,
+    'style_color', s.color
+  )
+) AS qr_code_styles
 FROM
 orders o
-JOIN
+LEFT JOIN
 customers c ON o.customer_id = c.id
 LEFT JOIN
 order_qr_code_relations oq ON o.id = oq.order_id
@@ -27,32 +31,21 @@ LEFT JOIN
 qr_singles qr ON oq.qr_single_id = qr.id
 LEFT JOIN
 styles s ON qr.style_id = s.id 
-WHERE o.id = $1`;
+WHERE o.id = $1
+GROUP BY
+o.id, o.checkout_date, o.checkin_date, c.id, c.name, c.email, c.address, c.phone_number;
+`;
 
-const getAllOrderInformation = `SELECT
+const getOrdersDashboardInfo = `SELECT
 o.id AS order_id,
 o.checkout_date,
 o.checkin_date,
-c.id AS customer_id,
 c.name AS customer_name,
-c.email AS customer_email,
-c.address AS customer_address,
-c.phone_number AS customer_phone_number,
-qr.id AS qr_code_id,
-qr.qr_code,
-s.id AS style_id,
-s.name AS style_name,
-s.color AS style_color
+c.email AS customer_email 
 FROM
 orders o
 JOIN
-customers c ON o.customer_id = c.id
-LEFT JOIN
-order_qr_code_relations oq ON o.id = oq.order_id
-LEFT JOIN
-qr_singles qr ON oq.qr_single_id = qr.id
-LEFT JOIN
-styles s ON qr.style_id = s.id;
+customers c ON o.customer_id = c.id;
 `;
 
 const getOrderByQR =
@@ -84,5 +77,5 @@ module.exports = {
   getAllOrdersWithStyles,
   getCurrentOrders,
   getOrdersByBulkQrs,
-  getAllOrderInformation,
+  getOrdersDashboardInfo,
 };

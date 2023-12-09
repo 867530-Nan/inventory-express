@@ -6,7 +6,7 @@ const ordersController = require("./controller");
 router.post("/", ordersController.createOrder);
 
 // Get all Orders (GET Request)
-router.get("/", ordersController.getAllOrders);
+router.get("/dashboard", ordersController.getOrdersDashboardInfo);
 
 router.get("/all-with-styles", ordersController.getAllOrdersWithStyles);
 

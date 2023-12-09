@@ -54,9 +54,9 @@ const createOrder = async (req, res) => {
 };
 
 // Get all Orders (GET Request)
-const getAllOrders = async (req, res) => {
+const getOrdersDashboardInfo = async (req, res) => {
   try {
-    const orders = await pool.query(queries.getAllOrderInformation);
+    const orders = await pool.query(queries.getOrdersDashboardInfo);
     res.status(200).json(orders.rows);
   } catch (error) {
     console.error("Error getting orders:", error);
@@ -103,21 +103,6 @@ const getOrderByQR = async (req, res) => {
 
 // Get Order by ID (GET Request)
 const getOrderById = async (req, res) => {
-  //   {
-  //     "order_id": 112,
-  //     "checkout_date": "2023-12-08 17:52:48.146365-07",
-  //     "checkin_date": null,
-  //     "customer_id": 3,
-  //     "customer_name": "Bobby Gumbo",
-  //     "customer_email": "bobby.gumbo@gmail.com",
-  //     "customer_address": "Gumbo Drive",
-  //     "customer_phone_number": "021 038 6301",
-  //     "qr_code_id": 13620,
-  //     "qr_code": 112942,
-  //     "style_id": 2,
-  //     "style_name": "8th Wonder",
-  //     "style_color": "0705 Oamaru"
-  // }
   try {
     const orderId = req.params.id;
     const order = await pool.query(queries.getOrderById, [orderId]);
@@ -126,8 +111,32 @@ const getOrderById = async (req, res) => {
       res.status(404).json({ error: "Order not found" });
       return;
     }
-
-    res.status(200).json({});
+    const {
+      customer_id,
+      customer_name,
+      customer_email,
+      customer_address,
+      customer_phone_number,
+      order_id,
+      checkout_date,
+      checkin_date,
+      qr_code_styles,
+    } = order.rows[0];
+    res.status(200).json({
+      customer: {
+        id: customer_id,
+        name: customer_name,
+        email: customer_email,
+        address: customer_address,
+        phone_number: customer_phone_number,
+      },
+      order: {
+        id: order_id,
+        checkout_date: checkout_date,
+        checkin_date: checkin_date,
+      },
+      codesAndStyles: qr_code_styles,
+    });
   } catch (error) {
     console.error("Error getting order by ID:", error);
     res.status(500).json({ error: "Unable to get order" });
@@ -177,7 +186,7 @@ const deleteOrderById = async (req, res) => {
 
 module.exports = {
   createOrder,
-  getAllOrders,
+  getOrdersDashboardInfo,
   getOrderById,
   getOrderByQR,
   updateOrderById,

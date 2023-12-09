@@ -12,6 +12,9 @@ const getStyleById = `SELECT * from qr_singles qr Left Join styles st on qr.styl
 
 const getStyleByQRCode = `SELECT st.*, qr.* from qr_singles qr Left Join styles st on qr.style_id = st.id where qr.qr_code = $1`;
 
+const latestQRCode =
+  "Select qr_code from qr_singles order by qr_code desc limit 1";
+
 const getBulkStylesFromQRCodes = `
 SELECT st.*, qr.*
 FROM qr_singles qr
@@ -47,4 +50,5 @@ module.exports = {
   getStyleByQRCode,
   getBulkStylesFromQRCodes,
   checkIfQRStyleHasInventory,
+  latestQRCode,
 };
