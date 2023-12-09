@@ -9,11 +9,11 @@ const getLowInventoryStyles = "SELECT * FROM STYLES WHERE inventory < 5";
 
 const decreaseStyleInventoryByOneViaQrID = `UPDATE styles
 SET inventory = inventory - 1
-WHERE id IN (SELECT style_id FROM qr_singles WHERE id IN ($1:csv));`;
+WHERE id IN (SELECT style_id FROM qr_singles WHERE id = ANY($1::int[]));`;
 
 const increaseStyleInventoryByOneViaQrID = `UPDATE styles
 SET inventory = inventory + 1
-WHERE id IN (SELECT style_id FROM qr_singles WHERE id IN ($1:csv));`;
+WHERE id IN (SELECT style_id FROM qr_singles WHERE id = ANY($1::int[]));`;
 
 const getDashboardInfoQuery = `SELECT
 styles.*,

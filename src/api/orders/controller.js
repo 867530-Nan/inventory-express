@@ -42,7 +42,7 @@ const createOrder = async (req, res) => {
       [qr_code_ids],
     );
 
-    res.status(201).json({
+    res.status(200).json({
       customer: customer.rows[0],
       order: order.rows[0],
       codesAndStyles: codesAndStyles.rows,
