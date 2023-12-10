@@ -243,6 +243,18 @@ const deleteOrderById = async (req, res) => {
   }
 };
 
+const checkInOrder = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    await pool.query(queries.checkInOrder, [orderId]);
+
+    res.status(204).end();
+  } catch (error) {
+    console.error("Error checking in order:", error);
+    res.status(500).json({ error: "Unable to checkin order" });
+  }
+};
+
 module.exports = {
   createOrder,
   getOrdersDashboardInfo,
@@ -253,4 +265,5 @@ module.exports = {
   getAllOrdersWithStyles,
   getCurrentOrders,
   updateEntireOrder,
+  checkInOrder,
 };

@@ -6,12 +6,15 @@ const { uuid } = require("uuidv4");
 
 // Create a new QR single
 const createQrSingle = async (req, res) => {
-  const { id, style_id } = req.body;
+  const { style_id } = req.body;
 
   try {
+    const qr_code = await pool.query(qrSinglesQueries.latestQRCode);
+    console.log("the latest", qr_code);
+    const increased_qr = qr_code.rows[0].qr_code + 1;
     const newQrSingle = await pool.query(qrSinglesQueries.createQrSingleQuery, [
-      id,
       style_id,
+      increased_qr,
     ]);
     res.status(201).json(newQrSingle.rows[0]);
   } catch (error) {
@@ -180,12 +183,12 @@ const checkHasInventory = async (req, res) => {
 
 // Delete a QR single by ID
 const deleteQrSingle = async (req, res) => {
-  const qrSingleId = req.params.id;
+  const qr_single_id = req.params.id;
 
   try {
     const deletedQrSingle = await pool.query(
       qrSinglesQueries.deleteQrSingleQuery,
-      [qrSingleId],
+      [qr_single_id],
     );
     if (deletedQrSingle.rowCount === 0) {
       res.status(404).json({ error: "QR single not found" });
@@ -194,6 +197,23 @@ const deleteQrSingle = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ error: "Error deleting the QR single" });
+  }
+};
+// Delete a QR single by ID
+const archiveQRSingle = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query(
+      "UPDATE qr_singles SET is_archived = true WHERE id = $1",
+      [id],
+    );
+    res
+      .status(200)
+      .json({ success: true, message: "Updated is_archived column." });
+  } catch (error) {
+    console.error("Error updating is_archived column:", error);
+    res.status(500).json({ success: false, message: "Internal server error." });
   }
 };
 
@@ -209,4 +229,5 @@ module.exports = {
   getStyleByQR,
   checkHasInventory,
   latestQRCode,
+  archiveQRSingle,
 };

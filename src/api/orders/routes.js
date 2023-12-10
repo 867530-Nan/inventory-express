@@ -8,6 +8,8 @@ router.post("/", ordersController.createOrder);
 // Get all Orders (GET Request)
 router.get("/dashboard", ordersController.getOrdersDashboardInfo);
 
+router.put("/check-in/:id", ordersController.checkInOrder);
+
 router.get("/all-with-styles", ordersController.getAllOrdersWithStyles);
 
 router.get("/order-counts", ordersController.getCurrentOrders);

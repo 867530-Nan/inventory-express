@@ -6,6 +6,8 @@ const getAllOrders = "SELECT * FROM orders";
 const getOrderById =
   "SELECT id, checkout_date, checkin_date from orders where id = $1";
 
+const checkInOrder = `Update Orders set checkin_date = CURRENT_DATE where id = $1`;
+
 const getOrderCustomerStylesById = `SELECT
 o.id AS order_id,
 o.checkout_date,
@@ -82,4 +84,5 @@ module.exports = {
   getOrdersByBulkQrs,
   getOrdersDashboardInfo,
   getOrderById,
+  checkInOrder,
 };

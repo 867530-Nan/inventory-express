@@ -46,7 +46,6 @@ const getInfoByStyleName = async (req, res) => {
   const { name } = req.body;
   try {
     const response = await pool.query(queries.getStyleInfoByName, [name]);
-    console.log("the whole response: ", response);
     function groupStyles(styles) {
       const groupedByName = styles.reduce((accByName, style) => {
         const { name, color } = style;

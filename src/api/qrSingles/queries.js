@@ -1,5 +1,5 @@
 const createQrSingleQuery = `
-  INSERT INTO qr_singles (id, style_id)
+  INSERT INTO qr_singles (style_id, qr_code)
   VALUES ($1, $2)
   RETURNING *;
 `;
