@@ -42,7 +42,7 @@ qr_singles ON styles.id = qr_singles.style_id
 LEFT JOIN
 orders ON qr_singles.id = orders.qr_single_id
 WHERE
-orders.order_date IS NOT NULL
+orders.checkout_date IS NOT NULL
 AND orders.checkin_date IS NULL
 GROUP BY
 styles.id;`;

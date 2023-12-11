@@ -14,7 +14,6 @@ router.get("/all-with-styles", ordersController.getAllOrdersWithStyles);
 
 router.get("/order-counts", ordersController.getCurrentOrders);
 
-// Get Order by ID (GET Request)
 router.get("/:id", ordersController.getOrderCustomerStylesById);
 
 router.put("/update-entire-order/:id", ordersController.updateEntireOrder);

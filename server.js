@@ -8,6 +8,7 @@ const customerRoutes = require("./src/api/customers/routes");
 const locationRoutes = require("./src/api/locations/routes");
 const orderRoutes = require("./src/api/orders/routes");
 const qrSinglesRoutes = require("./src/api/qrSingles/routes");
+const dashboardRoutes = require("./src/api/dashboard/routes");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 var cors = require("cors");
 
@@ -57,3 +58,5 @@ app.use("/api/v1/orders", orderRoutes);
 app.use("/api/v1/styles", stylesRoutes);
 
 app.use("/api/v1/qr-singles", qrSinglesRoutes);
+
+app.use("/api/v1/dashboard", dashboardRoutes);

@@ -50,7 +50,8 @@ c.email AS customer_email
 FROM
 orders o
 JOIN
-customers c ON o.customer_id = c.id;
+customers c ON o.customer_id = c.id
+ORDER BY o.checkout_date desc;
 `;
 
 const getOrderByQR =
@@ -65,7 +66,7 @@ const getAllOrdersWithStyles =
 const deleteOrderById = "DELETE FROM orders WHERE id = $1 RETURNING *";
 
 const getCurrentOrders =
-  "SELECT count(*) FROM ORDERS WHERE order_date IS NOT NULL AND checkin_date IS NULL";
+  "SELECT count(*) FROM ORDERS WHERE checkout_date IS NOT NULL AND checkin_date IS NULL";
 
 const getOrdersByBulkQrs = (qrCodes) => {
   const values = qrCodes.map((value) => `'${value}'`).join(",");
